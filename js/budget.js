@@ -1,25 +1,25 @@
 //Formas de pago//
 
-let borrarPago = false;
+let deletPayment = false;
   
-  $("#formasPago").click(mostrarPagos);
+  $("#formasPago").click(showPayments);
   $("#formPresupuesto > #divpagos").hide();
   
-function mostrarPagos() {
+function showPayments() {
     $.ajax({
       url: "json/ejemplo.json",
       tye: "GET",
       dataType: "json"
   
-    }).done( function(resultadoJson) {
-      if (borrarPago) {
+    }).done( function(resultJson) {
+      if (deletPayment) {
         $("#formPresupuesto > #divpagos").fadeOut(1000);      
       } else {   
           $("#formPresupuesto > #divpagos > h5").remove();
           $("#formPresupuesto > #divpagos > h4").remove();
           for (let i = 0; i <= 3; i++){
-            let id = resultadoJson.detalles[i].id;
-            let pago = resultadoJson.detalles[i].pago;
+            let id = resultJson.detalles[i].id;
+            let pago = resultJson.detalles[i].pago;
             console.log(id)
             let idelemento = document.createElement("h4");
             let idtexto = document.createTextNode(id);
@@ -32,7 +32,7 @@ function mostrarPagos() {
       } 
       $("#formPresupuesto > #divpagos").fadeIn(800);
     }
-    borrarPago = !borrarPago;
+    deletPayment = !deletPayment;
      }).fail( function(xhr, status, error) {
       console.log(xhr);
       console.log(status);
@@ -84,7 +84,7 @@ function totalPrice(param){
   
 //Validar datos//
 
-function validarNombre(valor) {
+function validateName(valor) {
     if( valor == null || valor.length == 0 || /^\s+$/.test(valor) ) {
       console.log(valor);
       return false;
@@ -92,7 +92,7 @@ function validarNombre(valor) {
     return true;
 }
   
-function validarDNI(valor) {
+function validateDNI(valor) {
     if( valor == null || valor.length == 0 || !(/^\d{7,8}$/.test(valor))) {
       console.log(valor);
       return false;
@@ -100,7 +100,7 @@ function validarDNI(valor) {
     return true;
 }
   
-function validarMail(valor) {
+function validateMail(valor) {
     const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     if( valor == null || valor.length == 0 || !re.test(valor)) {
       console.log(valor);
@@ -141,24 +141,24 @@ function getClient(){
 function submitForm(){
     let servicio1 = getService();
     let cliente1 = getClient();
-    mostrarPresupuesto(servicio1, cliente1);
-    guardarCliente(cliente1);
+    showBudget(servicio1, cliente1);
+    saveClient(cliente1);
   }
   
 $("#saveChanges").click( function() {
-    let nombreCheck = validarNombre($("#inputNombre").val());
-    let DNICheck = validarDNI($("#inputDni").val());
-    let mailCheck  = validarMail($("#inputEmail").val()); 
+    let nameCheck = validateName($("#inputNombre").val());
+    let DNICheck = validateDNI($("#inputDni").val());
+    let mailCheck  = validateMail($("#inputEmail").val()); 
   
     $("#formPresupuesto > #divmostrarPresup > h3").remove();
     $("#formPresupuesto > #validar-nombre > h6").remove();
     $("#formPresupuesto > #validar-dni > h6").remove();
     $("#formPresupuesto > #validar-email > h6").remove();
   
-    if(nombreCheck && DNICheck && mailCheck){
+    if(nameCheck && DNICheck && mailCheck){
       submitForm();
     }else{
-      if(nombreCheck == false){
+      if(nameCheck == false){
         let nombreFalse = $("<h6></h6>").text("Ingrese nombre válido!")
         $("#formPresupuesto > #validar-nombre").append(nombreFalse);
         //div con error en nombre
@@ -177,10 +177,10 @@ $("#saveChanges").click( function() {
   })
   
   $("#limpiarDatos").click(function(){
-    limpiarDatos();
+    removeElements();
   })
   
-  function limpiarDatos() {
+  function removeElements() {
     $("#formPresupuesto > #divmostrarPresup > h3").remove();
     $("#formPresupuesto > #divmostrarPresup > #selectCuotasPresupuesto").hide(300);
     $("#formPresupuesto > #divmostrarPresup > #labelCuotas").hide(300);
@@ -188,7 +188,7 @@ $("#saveChanges").click( function() {
   
 $("#formPresupuesto > #divmostrarPresup").hide();
   
-function mostrarPresupuesto(servicio,cliente) {
+function showBudget(servicio,cliente) {
       console.log(servicio)
       console.log(cliente)
       let resultado = totalPrice(servicio);
@@ -206,23 +206,23 @@ function mostrarPresupuesto(servicio,cliente) {
 //calculo de cuotas//
   
 $("#selectCuotasPresupuesto").change(function(){
-    calcularCuotas();
+    calculateFees();
 })
   
-function calcularCuotas() {
+function calculateFees() {
     let servicio1 = getService();
     let precioTotal = totalPrice(servicio1);
     let opcionesCuotas = parseInt($("#selectCuotasPresupuesto").val()) ;
     let calculoDeCuotas = precioTotal/opcionesCuotas;
     calculoDeCuotas = calculoDeCuotas.toFixed(2);
     console.log(calculoDeCuotas);
-    mostrarCuotas(calculoDeCuotas, opcionesCuotas);
+    showFees(calculoDeCuotas, opcionesCuotas);
     return calculoDeCuotas;
   };
   
   
   
-function mostrarCuotas(calculo, opciones) {
+function showFees(calculo, opciones) {
     let cliente1 = getClient();
     $("#formPresupuesto > #divmostrarPresup > h3").text("Hola "+ cliente1.nombre + ", su presupuesto es " + calculo + "U$D x" + opciones);
    
@@ -231,7 +231,7 @@ function mostrarCuotas(calculo, opciones) {
   
 //Local Storage//
 
-function guardarCliente(cliente2) {
+function saveClient(cliente2) {
     console.log(cliente2)
     let jsonCliente = { nombre: cliente2.nombre, dni: cliente2.dni, mail: cliente2.email }
     console.log(jsonCliente);
@@ -241,9 +241,9 @@ function guardarCliente(cliente2) {
     localStorage.setItem('cliente', stringifyJson);
 }
   
-cargarCliente();
+loadClient();
   
-function cargarCliente() {
+function loadClient() {
     let stringifyClient = localStorage.getItem('cliente')
     if (stringifyClient) {
     let cliente = JSON.parse(stringifyClient);

@@ -1,15 +1,5 @@
-//Scroll
+//Scroll 
 
-$("#buttonStart").click(scrollStart);
-
-function scrollStart() {
-    $("html, body").animate(
-        {
-            scrollTop: $("#service").offset().top
-        },
-        1500
-    )
-}
 
 $("#navHome").click(scrollHome);
 
